@@ -1,8 +1,8 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton)
 from PyQt5 import uic
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtGui import QPainter, QColor, QPixmap, QIcon
+from PyQt5.QtCore import QSize
 from PIL import Image
 import time
 import os
@@ -69,7 +69,6 @@ class Example(QMainWindow):
             self.labelForArt.setPixmap(pixmap)
             self.labelForArt.resize(self.labelForArt.sizeHint())
 
-
     def get_image(self):
         self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'C:/')[0]
         self.image = Image.open(self.fname)
@@ -124,19 +123,96 @@ class Example(QMainWindow):
 
     def createBtns(self, x, y):
         x_im, y_im = self.image.size
-        for n in range(36):
-            if x > y:
-                y = ((600 * y_im) // x_im) // 6
-                self.btn = QPushButton('', self)
-                self.btn.resize(100, y)
-                self.btn.move(random.randint(0, 180), random.randint(32, 720 - y))
-                self.btn.setObjectName("pushPiece" + str(n))
-            if y > x:
-                x = ((600 * x_im) // y_im) // 6
-                self.btn = QPushButton('', self)
-                self.btn.resize(x, 100)
-                self.btn.move(random.randint(0, 280 - x), random.randint(32, 620))
-                self.btn.setObjectName("pushPiece" + str(n))
+        if x > y:
+            y = ((600 * y_im) // x_im) // 6
+            x = 100
+        if y > x:
+            x = ((600 * x_im) // y_im) // 6
+            y = 100
+        self.buttons = set()
+        self.pushPiece11 = QPushButton('', self)
+        self.buttons.add(self.pushPiece11)
+        self.pushPiece12 = QPushButton('', self)
+        self.buttons.add(self.pushPiece12)
+        self.pushPiece13 = QPushButton('', self)
+        self.buttons.add(self.pushPiece13)
+        self.pushPiece14 = QPushButton('', self)
+        self.buttons.add(self.pushPiece14)
+        self.pushPiece15 = QPushButton('', self)
+        self.buttons.add(self.pushPiece15)
+        self.pushPiece16 = QPushButton('', self)
+        self.buttons.add(self.pushPiece16)
+        self.pushPiece21 = QPushButton('', self)
+        self.buttons.add(self.pushPiece21)
+        self.pushPiece22 = QPushButton('', self)
+        self.buttons.add(self.pushPiece22)
+        self.pushPiece23 = QPushButton('', self)
+        self.buttons.add(self.pushPiece23)
+        self.pushPiece24 = QPushButton('', self)
+        self.buttons.add(self.pushPiece24)
+        self.pushPiece25 = QPushButton('', self)
+        self.buttons.add(self.pushPiece25)
+        self.pushPiece26 = QPushButton('', self)
+        self.buttons.add(self.pushPiece26)
+        self.pushPiece31 = QPushButton('', self)
+        self.buttons.add(self.pushPiece31)
+        self.pushPiece32 = QPushButton('', self)
+        self.buttons.add(self.pushPiece32)
+        self.pushPiece33 = QPushButton('', self)
+        self.buttons.add(self.pushPiece33)
+        self.pushPiece34 = QPushButton('', self)
+        self.buttons.add(self.pushPiece34)
+        self.pushPiece35 = QPushButton('', self)
+        self.buttons.add(self.pushPiece35)
+        self.pushPiece36 = QPushButton('', self)
+        self.buttons.add(self.pushPiece36)
+        self.pushPiece41 = QPushButton('', self)
+        self.buttons.add(self.pushPiece41)
+        self.pushPiece42 = QPushButton('', self)
+        self.buttons.add(self.pushPiece42)
+        self.pushPiece43 = QPushButton('', self)
+        self.buttons.add(self.pushPiece43)
+        self.pushPiece44 = QPushButton('', self)
+        self.buttons.add(self.pushPiece44)
+        self.pushPiece45 = QPushButton('', self)
+        self.buttons.add(self.pushPiece45)
+        self.pushPiece46 = QPushButton('', self)
+        self.buttons.add(self.pushPiece46)
+        self.pushPiece51 = QPushButton('', self)
+        self.buttons.add(self.pushPiece51)
+        self.pushPiece52 = QPushButton('', self)
+        self.buttons.add(self.pushPiece52)
+        self.pushPiece53 = QPushButton('', self)
+        self.buttons.add(self.pushPiece53)
+        self.pushPiece54 = QPushButton('', self)
+        self.buttons.add(self.pushPiece54)
+        self.pushPiece55 = QPushButton('', self)
+        self.buttons.add(self.pushPiece55)
+        self.pushPiece56 = QPushButton('', self)
+        self.buttons.add(self.pushPiece56)
+        self.pushPiece61 = QPushButton('', self)
+        self.buttons.add(self.pushPiece61)
+        self.pushPiece62 = QPushButton('', self)
+        self.buttons.add(self.pushPiece62)
+        self.pushPiece63 = QPushButton('', self)
+        self.buttons.add(self.pushPiece63)
+        self.pushPiece64 = QPushButton('', self)
+        self.buttons.add(self.pushPiece64)
+        self.pushPiece65 = QPushButton('', self)
+        self.buttons.add(self.pushPiece65)
+        self.pushPiece66 = QPushButton('', self)
+        self.buttons.add(self.pushPiece66)
+        name_1, name_2 = 1, 1
+        for btn in self.buttons:
+            if name_2 == 7:
+                name_1 += 1
+                name_2 = 1
+            btn.resize(x, y)
+            btn.move(random.randint(0, 280 - x), random.randint(32, 720 - y))
+            icon = QIcon('data/image' + str(name_1) + str(name_2))
+            btn.setIcon(icon)
+            btn.setIconSize(QSize(x, y))
+            name_2 += 1
 
 
 def wait(sec):
