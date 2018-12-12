@@ -23,6 +23,7 @@ class Example(QMainWindow):
         self.get_image()
         self.make_puzzle()
         self.createBtns()
+        self.t_start = time.time()
 
     def paintEvent(self, event):
         if self.image_have_taken:
@@ -38,21 +39,47 @@ class Example(QMainWindow):
             x2, y2 = 995, 45
             qp.drawLine(x1, y1, x2, y2)
             x1, y1 = x2, y2
-            y2 = (600 * y_i) // x_i
+            y2 = (600 * y_i) // x_i + 55
             qp.drawLine(x1, y1, x2, y2)
+            x1, y1 = x2, y2
+            x2 = 385
+            qp.drawLine(x1, y1, x2, y2)
+            x1, y1 = x2, y2
+            x2, y2 = 385, 45
+            qp.drawLine(x1, y1, x2, y2)
+        elif self.frame_to_hight:
+            x_i, y_i = self.image.size
+            x1, y1 = 385, 45
+            x2, y2 = 385, 655
+            qp.drawLine(x1, y1, x2, y2)
+            x1, y1 = x2, y2
+            x2 = (600 * x_i) // y_i + 395
+            qp.drawLine(x1, y1, x2, y2)
+            x1, y1 = x2, y2
+            y2 = 45
+            qp.drawLine(x1, y1, x2, y2)
+            x1, y1 = x2, y2
+            x2, y2 = 385, 45
+            qp.drawLine(x1, y1, x2, y2)
+        if self.checkShowPicture.isChecked():
+            self.labelForArt.setPixmap(self.pixmap)
+            self.labelForArt.resize(self.labelForArt.sizeHint())
+        else:
+            pixmap = QPixmap('')
+            self.labelForArt.setPixmap(pixmap)
+            self.labelForArt.resize(self.labelForArt.sizeHint())
+
 
     def get_image(self):
         self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'C:/')[0]
         self.image = Image.open(self.fname)
         x, y = self.image.size
-        if x > y:
-            pixmap = QPixmap(self.fname).scaledToWidth(600)
+        if x >= y:
+            self.pixmap = QPixmap(self.fname).scaledToWidth(600)
             self.frame_to_width = True
         else:
-            pixmap = QPixmap(self.fname).scaledToHeight(600)
+            self.pixmap = QPixmap(self.fname).scaledToHeight(600)
             self.frame_to_hight = True
-        self.labelForArt.setPixmap(pixmap)
-        self.labelForArt.resize(self.labelForArt.sizeHint())
         self.image_have_taken = True
 
     def make_puzzle(self):
@@ -72,9 +99,27 @@ class Example(QMainWindow):
 
     def set_image(self, x, y):
         x_im, y_im = self.image.size
+        pix = self.image.load()
         if x > y:
-            sub = y_im - y
-            # сделать преобразования
+            sub = y_im - y * 6
+            new_im = Image.new('RGB', (x_im, y * 6), (0, 0, 0))
+            new_pix = new_im.load()
+            for i in range(x_im - 1):
+                for j in range(y_im - sub):
+                    new_pix[i, j] = pix[i, j]
+            new_im.save('data/main_pic.jpg')
+            self.image = Image.open('data/main_pic.jpg')
+            self.pixmap = QPixmap(self.fname).scaledToWidth(600)
+        elif y > x:
+            sub = x_im - x * 6
+            new_im = Image.new('RGB', (x * 6, y_im), (0, 0, 0))
+            new_pix = new_im.load()
+            for i in range(x_im - sub):
+                for j in range(y_im - 1):
+                    new_pix[i, j] = pix[i, j]
+            new_im.save('data/main_pic.jpg')
+            self.image = Image.open('data/main_pic.jpg')
+            self.pixmap = QPixmap(self.fname).scaledToHeight(600)
 
 
     def createBtns(self):
