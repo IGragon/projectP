@@ -1,11 +1,12 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton)
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QPainter, QColor
 from PIL import Image
 import time
 import os
+import random
 import math
 
 
@@ -22,7 +23,6 @@ class Example(QMainWindow):
         self.fixedPoints = dict()
         self.get_image()
         self.make_puzzle()
-        self.createBtns()
         self.t_start = time.time()
 
     def paintEvent(self, event):
@@ -96,6 +96,7 @@ class Example(QMainWindow):
                 name = 'image' + str(i + 1) + str(j + 1) + '.jpg'
                 croped.save('data/' + name)
         self.set_image(step_x, step_y)
+        self.createBtns(step_x, step_y)
 
     def set_image(self, x, y):
         x_im, y_im = self.image.size
@@ -121,10 +122,21 @@ class Example(QMainWindow):
             self.image = Image.open('data/main_pic.jpg')
             self.pixmap = QPixmap(self.fname).scaledToHeight(600)
 
-
-    def createBtns(self):
-        for _ in range(36):
-            pass
+    def createBtns(self, x, y):
+        x_im, y_im = self.image.size
+        for n in range(36):
+            if x > y:
+                y = ((600 * y_im) // x_im) // 6
+                self.btn = QPushButton('', self)
+                self.btn.resize(100, y)
+                self.btn.move(random.randint(0, 180), random.randint(32, 720 - y))
+                self.btn.setObjectName("pushPiece" + str(n))
+            if y > x:
+                x = ((600 * x_im) // y_im) // 6
+                self.btn = QPushButton('', self)
+                self.btn.resize(x, 100)
+                self.btn.move(random.randint(0, 280 - x), random.randint(32, 620))
+                self.btn.setObjectName("pushPiece" + str(n))
 
 
 def wait(sec):
