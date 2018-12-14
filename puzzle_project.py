@@ -20,6 +20,8 @@ class Example(QMainWindow):
         self.frame_to_hight = False
         self.frame_to_width = False
         self.image_have_taken = False
+        self.is_piece_following = False
+        self.places_for_Pieces = dict()
         self.fixedPoints = dict()
         self.get_image()
         self.make_puzzle()
@@ -126,7 +128,7 @@ class Example(QMainWindow):
         if x > y:
             y = ((600 * y_im) // x_im) // 6
             x = 100
-        if y > x:
+        if y >= x:
             x = ((600 * x_im) // y_im) // 6
             y = 100
         self.buttons = []
@@ -202,6 +204,14 @@ class Example(QMainWindow):
         self.buttons.append(self.pushPiece65)
         self.pushPiece66 = QPushButton('', self)
         self.buttons.append(self.pushPiece66)
+        for btn in self.buttons:
+            btn.clicked.connect(self.move_piece)
+        self.height_of_piece = y
+        self.width_of_piece = x
+        for x_n in range(6):
+            for y_n in range(6):
+                self.places_for_Pieces[str(x_n + 1) + str(y_n + 1)] = \
+                    [390 + x_n * self.width_of_piece, 50 + y_n * self.height_of_piece]
         name_1, name_2 = 1, 1
         for btn in self.buttons:
             if name_2 == 7:
@@ -213,6 +223,61 @@ class Example(QMainWindow):
             btn.setIcon(icon)
             btn.setIconSize(QSize(x, y))
             name_2 += 1
+
+    def move_piece(self):
+        if self.is_piece_following:
+            print('TAKE')
+            self.is_piece_following = False
+            mid_x = self.moving_piece.x() + self.width_of_piece // 2
+            mid_y = self.moving_piece.y() + self.height_of_piece // 2
+            if 390 < mid_x < (390 + self.width_of_piece * 6) and \
+                    50 < mid_y < (50 + self.height_of_piece * 6):
+                open_places = list(filter(lambda place: len(place[1]) < 3 and
+                                                   abs(place[1][0] - self.moving_piece.x()) < self.width_of_piece and
+                                                   abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
+                                     self.places_for_Pieces.items()))
+                print(len(open_places))
+                if len(open_places):
+                    n_in_Places_for_Pieces = min(open_places,
+                        key = lambda place:
+                        ((place[1][0] - self.moving_piece.x()) ** 2
+                         + (place[1][1] - self.moving_piece.y()) ** 2)
+                        ** 0.5)[0]
+                    print(self.moving_piece, self.moving_piece.objectName())
+                    self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
+                    print('fd')
+                    self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
+                                           self.places_for_Pieces[n_in_Places_for_Pieces][1])
+                print('TAKE END')
+
+
+        else:
+            print('PUT')
+            self.moving_piece = self.sender()
+            if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
+                    not ((self.moving_piece.y() - 50) % self.height_of_piece):
+                print('IN!')
+                coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
+                coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
+                n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
+                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
+                    del self.places_for_Pieces[n_coord][-1]
+            print('END PUT', self.places_for_Pieces)
+            self.is_piece_following = True
+
+    def mouseMoveEvent(self, event):
+        if self.is_piece_following:
+            new_x = event.x() - self.width_of_piece // 2
+            if new_x < 0:
+                new_x = 0
+            elif new_x + self.width_of_piece > 1080:
+                new_x = 1080 - self.width_of_piece
+            new_y = event.y() - self.height_of_piece // 2
+            if new_y < 0:
+                new_y = 0
+            elif new_y + self.height_of_piece > 720:
+                new_y = 720 - self.height_of_piece
+            self.moving_piece.move(new_x, new_y)
 
 
 def wait(sec):
