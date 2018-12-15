@@ -72,7 +72,7 @@ class Example(QMainWindow):
             self.labelForArt.resize(self.labelForArt.sizeHint())
 
     def get_image(self):
-        self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'C:/')[0]
+        self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'images/')[0]
         self.image = Image.open(self.fname)
         x, y = self.image.size
         if x >= y:
