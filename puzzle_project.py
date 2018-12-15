@@ -132,97 +132,26 @@ class Example(QMainWindow):
             x = ((600 * x_im) // y_im) // 6
             y = 100
         self.buttons = []
-        self.pushPiece11 = QPushButton('', self)
-        self.buttons.append(self.pushPiece11)
-        self.pushPiece12 = QPushButton('', self)
-        self.buttons.append(self.pushPiece12)
-        self.pushPiece13 = QPushButton('', self)
-        self.buttons.append(self.pushPiece13)
-        self.pushPiece14 = QPushButton('', self)
-        self.buttons.append(self.pushPiece14)
-        self.pushPiece15 = QPushButton('', self)
-        self.buttons.append(self.pushPiece15)
-        self.pushPiece16 = QPushButton('', self)
-        self.buttons.append(self.pushPiece16)
-        self.pushPiece21 = QPushButton('', self)
-        self.buttons.append(self.pushPiece21)
-        self.pushPiece22 = QPushButton('', self)
-        self.buttons.append(self.pushPiece22)
-        self.pushPiece23 = QPushButton('', self)
-        self.buttons.append(self.pushPiece23)
-        self.pushPiece24 = QPushButton('', self)
-        self.buttons.append(self.pushPiece24)
-        self.pushPiece25 = QPushButton('', self)
-        self.buttons.append(self.pushPiece25)
-        self.pushPiece26 = QPushButton('', self)
-        self.buttons.append(self.pushPiece26)
-        self.pushPiece31 = QPushButton('', self)
-        self.buttons.append(self.pushPiece31)
-        self.pushPiece32 = QPushButton('', self)
-        self.buttons.append(self.pushPiece32)
-        self.pushPiece33 = QPushButton('', self)
-        self.buttons.append(self.pushPiece33)
-        self.pushPiece34 = QPushButton('', self)
-        self.buttons.append(self.pushPiece34)
-        self.pushPiece35 = QPushButton('', self)
-        self.buttons.append(self.pushPiece35)
-        self.pushPiece36 = QPushButton('', self)
-        self.buttons.append(self.pushPiece36)
-        self.pushPiece41 = QPushButton('', self)
-        self.buttons.append(self.pushPiece41)
-        self.pushPiece42 = QPushButton('', self)
-        self.buttons.append(self.pushPiece42)
-        self.pushPiece43 = QPushButton('', self)
-        self.buttons.append(self.pushPiece43)
-        self.pushPiece44 = QPushButton('', self)
-        self.buttons.append(self.pushPiece44)
-        self.pushPiece45 = QPushButton('', self)
-        self.buttons.append(self.pushPiece45)
-        self.pushPiece46 = QPushButton('', self)
-        self.buttons.append(self.pushPiece46)
-        self.pushPiece51 = QPushButton('', self)
-        self.buttons.append(self.pushPiece51)
-        self.pushPiece52 = QPushButton('', self)
-        self.buttons.append(self.pushPiece52)
-        self.pushPiece53 = QPushButton('', self)
-        self.buttons.append(self.pushPiece53)
-        self.pushPiece54 = QPushButton('', self)
-        self.buttons.append(self.pushPiece54)
-        self.pushPiece55 = QPushButton('', self)
-        self.buttons.append(self.pushPiece55)
-        self.pushPiece56 = QPushButton('', self)
-        self.buttons.append(self.pushPiece56)
-        self.pushPiece61 = QPushButton('', self)
-        self.buttons.append(self.pushPiece61)
-        self.pushPiece62 = QPushButton('', self)
-        self.buttons.append(self.pushPiece62)
-        self.pushPiece63 = QPushButton('', self)
-        self.buttons.append(self.pushPiece63)
-        self.pushPiece64 = QPushButton('', self)
-        self.buttons.append(self.pushPiece64)
-        self.pushPiece65 = QPushButton('', self)
-        self.buttons.append(self.pushPiece65)
-        self.pushPiece66 = QPushButton('', self)
-        self.buttons.append(self.pushPiece66)
-        for btn in self.buttons:
-            btn.clicked.connect(self.move_piece)
+        for i in range(6):
+            part = []
+            for j in range(6):
+                btn = QPushButton('', self)
+                btn.resize(x, y)
+                btn.move(random.randint(0, 280 - x), random.randint(32, 720 - y))
+                icon = QIcon('data/image' + str(i + 1) + str(j + 1))
+                btn.setIcon(icon)
+                btn.setIconSize(QSize(x, y))
+                part.append(btn)
+            self.buttons.append(part)
+        for l in self.buttons:
+            for btn in l:
+                btn.clicked.connect(self.move_piece)
         self.height_of_piece = y
         self.width_of_piece = x
         for x_n in range(6):
             for y_n in range(6):
                 self.places_for_Pieces[str(x_n + 1) + str(y_n + 1)] = \
                     [390 + x_n * self.width_of_piece, 50 + y_n * self.height_of_piece]
-        name_1, name_2 = 1, 1
-        for btn in self.buttons:
-            if name_2 == 7:
-                name_1 += 1
-                name_2 = 1
-            btn.resize(x, y)
-            btn.move(random.randint(0, 280 - x), random.randint(32, 720 - y))
-            icon = QIcon('data/image' + str(name_1) + str(name_2))
-            btn.setIcon(icon)
-            btn.setIconSize(QSize(x, y))
-            name_2 += 1
 
     def move_piece(self):
         if self.is_piece_following:
