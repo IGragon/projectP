@@ -21,6 +21,7 @@ class Example(QMainWindow):
         self.frame_to_width = False
         self.image_have_taken = False
         self.is_piece_following = False
+        self.count_of_placed_Pieces = 0
         self.places_for_Pieces = dict()
         self.fixedPoints = dict()
         self.get_image()
@@ -204,8 +205,16 @@ class Example(QMainWindow):
         self.buttons.append(self.pushPiece65)
         self.pushPiece66 = QPushButton('', self)
         self.buttons.append(self.pushPiece66)
+        x_btn = 1
+        y_btn = 1
         for btn in self.buttons:
             btn.clicked.connect(self.move_piece)
+            btn.setMouseTracking(True)
+            btn.setObjectName(str(x_btn) + str(y_btn))
+            y_btn += 1
+            if y_btn == 7:
+                y_btn = 1
+                x_btn += 1
         self.height_of_piece = y
         self.width_of_piece = x
         for x_n in range(6):
@@ -243,17 +252,22 @@ class Example(QMainWindow):
                         ((place[1][0] - self.moving_piece.x()) ** 2
                          + (place[1][1] - self.moving_piece.y()) ** 2)
                         ** 0.5)[0]
-                    print(self.moving_piece, self.moving_piece.objectName())
+                    print(self.moving_piece)
                     self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
                     print('fd')
                     self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
                                            self.places_for_Pieces[n_in_Places_for_Pieces][1])
+                    self.count_of_placed_Pieces += 1
                 print('TAKE END')
+                if self.count_of_placed_Pieces == 36:
+                    self.win
 
 
         else:
             print('PUT')
+            print('meow1', self.sender().objectName())
             self.moving_piece = self.sender()
+            print('meow', self.moving_piece.objectName())
             if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
                 print('IN!')
@@ -262,6 +276,7 @@ class Example(QMainWindow):
                 n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
                 if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
                     del self.places_for_Pieces[n_coord][-1]
+                    self.count_of_placed_Pieces -= 1
             print('END PUT', self.places_for_Pieces)
             self.is_piece_following = True
 
@@ -278,6 +293,11 @@ class Example(QMainWindow):
             elif new_y + self.height_of_piece > 720:
                 new_y = 720 - self.height_of_piece
             self.moving_piece.move(new_x, new_y)
+
+    def win(self):
+        for btn in self.buttons:
+            btn.enabled(False)
+        self.label_3.setText('Победа!')
 
 
 def wait(sec):
