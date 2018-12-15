@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1080</width>
-    <height>720</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -45,7 +45,7 @@
       <x>280</x>
       <y>0</y>
       <width>20</width>
-      <height>720</height>
+      <height>861</height>
      </rect>
     </property>
     <property name="frameShadow">
@@ -123,6 +123,20 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="pushChoosePicture">
+    <property name="geometry">
+     <rect>
+      <x>474</x>
+      <y>0</y>
+      <width>91</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Выбрать
+картинку</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

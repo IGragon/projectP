@@ -120,7 +120,6 @@ class Example(QMainWindow):
                 btn.setIconSize(QSize(x, y))
                 btn.setMouseTracking(True)
                 btn.setObjectName('btn' + str(i + 1) + str(j + 1))
-                print(btn.objectName())
                 part.append(btn)
             self.buttons.append(part)
         for l in self.buttons:
