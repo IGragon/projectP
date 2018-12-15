@@ -82,6 +82,8 @@ class Example(QMainWindow):
             self.pixmap = QPixmap(self.fname).scaledToHeight(600)
             self.frame_to_hight = True
         self.image_have_taken = True
+        self.pixmap.save('data/main_pic.jpg')
+        self.image = Image.open('data/main_pic.jpg')
 
     def make_puzzle(self):
         os.system('mkdir data')
@@ -96,32 +98,7 @@ class Example(QMainWindow):
                 self.fixedPoints[str(i) + str(j)] = (j * step_x + 390, i * step_y + 50)
                 name = 'image' + str(i + 1) + str(j + 1) + '.jpg'
                 croped.save('data/' + name)
-        self.set_image(step_x, step_y)
         self.createBtns(step_x, step_y)
-
-    def set_image(self, x, y):
-        x_im, y_im = self.image.size
-        pix = self.image.load()
-        if x > y:
-            sub = y_im - y * 6
-            new_im = Image.new('RGB', (x_im, y * 6), (0, 0, 0))
-            new_pix = new_im.load()
-            for i in range(x_im - 1):
-                for j in range(y_im - sub):
-                    new_pix[i, j] = pix[i, j]
-            new_im.save('data/main_pic.jpg')
-            self.image = Image.open('data/main_pic.jpg')
-            self.pixmap = QPixmap(self.fname).scaledToWidth(600)
-        elif y > x:
-            sub = x_im - x * 6
-            new_im = Image.new('RGB', (x * 6, y_im), (0, 0, 0))
-            new_pix = new_im.load()
-            for i in range(x_im - sub):
-                for j in range(y_im - 1):
-                    new_pix[i, j] = pix[i, j]
-            new_im.save('data/main_pic.jpg')
-            self.image = Image.open('data/main_pic.jpg')
-            self.pixmap = QPixmap(self.fname).scaledToHeight(600)
 
     def createBtns(self, x, y):
         x_im, y_im = self.image.size
@@ -155,7 +132,6 @@ class Example(QMainWindow):
 
     def move_piece(self):
         if self.is_piece_following:
-            print('TAKE')
             self.is_piece_following = False
             mid_x = self.moving_piece.x() + self.width_of_piece // 2
             mid_y = self.moving_piece.y() + self.height_of_piece // 2
@@ -165,33 +141,24 @@ class Example(QMainWindow):
                                                    abs(place[1][0] - self.moving_piece.x()) < self.width_of_piece and
                                                    abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
                                      self.places_for_Pieces.items()))
-                print(len(open_places))
                 if len(open_places):
                     n_in_Places_for_Pieces = min(open_places,
                         key = lambda place:
                         ((place[1][0] - self.moving_piece.x()) ** 2
                          + (place[1][1] - self.moving_piece.y()) ** 2)
                         ** 0.5)[0]
-                    print(self.moving_piece, self.moving_piece.objectName())
                     self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
-                    print('fd')
                     self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
                                            self.places_for_Pieces[n_in_Places_for_Pieces][1])
-                print('TAKE END')
-
-
         else:
-            print('PUT')
             self.moving_piece = self.sender()
             if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
-                print('IN!')
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
                 n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
                 if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
                     del self.places_for_Pieces[n_coord][-1]
-            print('END PUT', self.places_for_Pieces)
             self.is_piece_following = True
 
     def mouseMoveEvent(self, event):
@@ -207,12 +174,6 @@ class Example(QMainWindow):
             elif new_y + self.height_of_piece > 720:
                 new_y = 720 - self.height_of_piece
             self.moving_piece.move(new_x, new_y)
-
-
-def wait(sec):
-    t = time.time()
-    while time.time() - t < sec:
-        pass
 
 
 if __name__ == '__main__':
