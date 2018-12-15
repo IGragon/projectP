@@ -125,10 +125,10 @@ class Example(QMainWindow):
 
     def createBtns(self, x, y):
         x_im, y_im = self.image.size
-        if x > y:
+        if x >= y:
             y = ((600 * y_im) // x_im) // 6
             x = 100
-        if y >= x:
+        if y > x:
             x = ((600 * x_im) // y_im) // 6
             y = 100
         self.buttons = []
