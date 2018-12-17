@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton, QMessageBox, QWidget)
 from PyQt5 import uic
 from PyQt5.QtGui import QPainter, QColor, QPixmap, QIcon
 from PyQt5.QtCore import QSize
@@ -26,6 +26,20 @@ class Example(QMainWindow):
         self.get_image()
         self.make_puzzle()
         self.t_start = time.time()
+        self.pushChoosePicture.clicked.connect(self.clear_field)
+
+    def clear_field(self):
+        warning = QMessageBox.question(self, 'Warning', 'Вы точно хотите выбрать новую картинку и начать игру заново?',
+                                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if warning == QMessageBox.Yes:
+            self.congrat = Congratulations(ex.t_start)
+            self.congrat.show()
+            '''for row in self.buttons:
+                for btn in row:
+                    self.centralwidget.removeWidget(btn)
+            self.get_image()
+            self.make_puzzle()
+            self.t_start = time.time()'''
 
     def paintEvent(self, event):
         if self.image_have_taken:
@@ -140,15 +154,16 @@ class Example(QMainWindow):
             if 390 < mid_x < (390 + self.width_of_piece * 6) and \
                     50 < mid_y < (50 + self.height_of_piece * 6):
                 open_places = list(filter(lambda place: len(place[1]) < 3 and
-                                                   abs(place[1][0] - self.moving_piece.x()) < self.width_of_piece and
-                                                   abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
-                                     self.places_for_Pieces.items()))
+                                                        abs(place[1][
+                                                                0] - self.moving_piece.x()) < self.width_of_piece and
+                                                        abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
+                                          self.places_for_Pieces.items()))
                 if len(open_places):
                     n_in_Places_for_Pieces = min(open_places,
-                        key = lambda place:
-                        ((place[1][0] - self.moving_piece.x()) ** 2
-                         + (place[1][1] - self.moving_piece.y()) ** 2)
-                        ** 0.5)[0]
+                                                 key=lambda place:
+                                                 ((place[1][0] - self.moving_piece.x()) ** 2
+                                                  + (place[1][1] - self.moving_piece.y()) ** 2)
+                                                 ** 0.5)[0]
                     self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
                     self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
                                            self.places_for_Pieces[n_in_Places_for_Pieces][1])
@@ -159,7 +174,8 @@ class Example(QMainWindow):
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
                 n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
-                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
+                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][
+                    -1] == self.moving_piece:
                     del self.places_for_Pieces[n_coord][-1]
             self.is_piece_following = True
 
@@ -176,6 +192,21 @@ class Example(QMainWindow):
             elif new_y + self.height_of_piece > 720:
                 new_y = 720 - self.height_of_piece
             self.moving_piece.move(new_x, new_y)
+
+
+class Congratulations(QWidget):
+    def __init__(self, t):
+        super().__init__()
+        uic.loadUi('congrat.ui', self)
+        self.setFixedSize(800, 560)
+        self.setPicture()
+        self.pushClose.clicked.connect(self.close)
+        self.labelTime.setText(self.labelTime.text() + str(round(time.time() - t, 2)) + ' секунд')
+
+    def setPicture(self):
+        pixmap = QPixmap('data/congratulations.jpg')
+        self.labelCon.setPixmap(pixmap)
+        self.labelCon.resize(self.labelCon.sizeHint())
 
 
 if __name__ == '__main__':
