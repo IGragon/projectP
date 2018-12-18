@@ -20,10 +20,12 @@ class Example(QMainWindow):
         self.frame_to_hight = False
         self.frame_to_width = False
         self.image_have_taken = False
-        self.is_piece_following = False
-        self.count_of_placed_Pieces = 0
-        self.places_for_Pieces = dict()
         self.fixedPoints = dict()
+
+        self.is_piece_following = False
+        self.count_of_good_placed_Pieces = 0
+        self.places_for_Pieces = dict()
+
         self.get_image()
         self.make_puzzle()
         self.t_start = time.time()
@@ -210,7 +212,8 @@ class Example(QMainWindow):
         for btn in self.buttons:
             btn.clicked.connect(self.move_piece)
             btn.setMouseTracking(True)
-            btn.setObjectName(str(x_btn) + str(y_btn))
+            btn.setObjectName(str(y_btn) + str(x_btn))
+            print(str(y_btn) + str(x_btn))
             y_btn += 1
             if y_btn == 7:
                 y_btn = 1
@@ -245,39 +248,37 @@ class Example(QMainWindow):
                                                    abs(place[1][0] - self.moving_piece.x()) < self.width_of_piece and
                                                    abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
                                      self.places_for_Pieces.items()))
-                print(len(open_places))
                 if len(open_places):
                     n_in_Places_for_Pieces = min(open_places,
                         key = lambda place:
                         ((place[1][0] - self.moving_piece.x()) ** 2
                          + (place[1][1] - self.moving_piece.y()) ** 2)
                         ** 0.5)[0]
-                    print(self.moving_piece)
                     self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
-                    print('fd')
                     self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
                                            self.places_for_Pieces[n_in_Places_for_Pieces][1])
-                    self.count_of_placed_Pieces += 1
+                    if self.moving_piece.objectName() == n_in_Places_for_Pieces:
+                        self.count_of_good_placed_Pieces += 1
+                print('good placed {}'.format(self.count_of_good_placed_Pieces))
                 print('TAKE END')
-                if self.count_of_placed_Pieces == 36:
-                    self.win
+                if self.count_of_good_placed_Pieces == 36:
+                    self.win()
 
 
         else:
             print('PUT')
-            print('meow1', self.sender().objectName())
             self.moving_piece = self.sender()
-            print('meow', self.moving_piece.objectName())
             if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
-                print('IN!')
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
                 n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
                 if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
+                    if self.moving_piece.objectName() == n_coord:
+                        self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
-                    self.count_of_placed_Pieces -= 1
-            print('END PUT', self.places_for_Pieces)
+            print('good placed {}'.format(self.count_of_good_placed_Pieces))
+            print('END PUT')
             self.is_piece_following = True
 
     def mouseMoveEvent(self, event):
@@ -296,7 +297,7 @@ class Example(QMainWindow):
 
     def win(self):
         for btn in self.buttons:
-            btn.enabled(False)
+            btn.setEnabled(False)
         self.label_3.setText('Победа!')
 
 
