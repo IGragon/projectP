@@ -15,6 +15,8 @@ class Example(QMainWindow):
         super().__init__()
         uic.loadUi('puzzle.ui', self)
         self.setFixedSize(1080, 720)
+        icon = QIcon("sys_im/icon.png")
+        self.setWindowIcon(icon)
         self.fname = ''
         self.image = ''
         self.frame_to_hight = False
@@ -225,7 +227,7 @@ class Congratulations(QWidget):
         self.labelTime.setText(self.labelTime.text() + str(round(time.time() - t, 2)) + ' секунд')
 
     def setPicture(self):
-        pixmap = QPixmap('data/congratulations.jpg')
+        pixmap = QPixmap('sys_im/congratulations.jpg')
         self.labelCon.setPixmap(pixmap)
         self.labelCon.resize(self.labelCon.sizeHint())
 
