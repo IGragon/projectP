@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton, QMessageBox, QWidget)
 from PyQt5 import uic
 from PyQt5.QtGui import QPainter, QColor, QPixmap, QIcon
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QEvent
 from PIL import Image
 import time
 import os
@@ -205,6 +205,15 @@ class Example(QMainWindow):
         self.congrat = Congratulations(self.t_start)
         self.congrat.show()
 
+    def closeEvent(self, event):
+        buttonReply = QMessageBox.question(self, 'Quit?', "Хотите выйти?",
+                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if buttonReply == QMessageBox.Yes:
+            os.system('del data /Q')
+            self.close()
+        else:
+            event.ignore()
+
 
 class Congratulations(QWidget):
     def __init__(self, t):
@@ -229,6 +238,8 @@ class StartSettings(QWidget):
         super().__init__()
         uic.loadUi('start.ui', self)
         self.setFixedSize(400, 600)
+        icon = QIcon("sys_im/icon_start.png")
+        self.setWindowIcon(icon)
         self.im = ''
         self.fname = ''
         self.pushStart.clicked.connect(self.close_window)
