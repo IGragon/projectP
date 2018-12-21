@@ -179,7 +179,8 @@ class Example(QMainWindow):
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
                 n_coord = str(coord_x_in_field + 1) + ' ' + str(coord_y_in_field + 1)
-                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
+                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][
+                    -1] == self.moving_piece:
                     if self.moving_piece.objectName() == n_coord:
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
@@ -220,6 +221,8 @@ class Congratulations(QWidget):
         super().__init__()
         uic.loadUi('congrat.ui', self)
         self.setFixedSize(800, 560)
+        icon = QIcon("sys_im/congrat.png")
+        self.setWindowIcon(icon)
         self.setPicture()
         self.pushClose.clicked.connect(self.close)
         game_time = time.time() - t
@@ -248,14 +251,14 @@ class StartSettings(QWidget):
 
     def closeEvent(self, event):
         if (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-            and int(self.lineWidth.text()) > 1 and int(self.lineHeight.text()) > 1) and self.fname:
+                and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1) and self.fname:
             if self.fname:
                 self.main_window = Example(self.fname, self.lineWidth.text(), self.lineHeight.text())
                 self.main_window.show()
                 self.close()
         else:
             if not self.fname and not (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-                                       and 12 > int(self.lineWidth.text()) > 1 and 12 > int(
+                                       and 13 > int(self.lineWidth.text()) > 1 and 13 > int(
                         self.lineHeight.text()) > 1):
                 text = 'Неверное количество элементов и невыбрана картинка'
             elif not (13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1):
