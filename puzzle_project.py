@@ -1,13 +1,12 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton, QMessageBox, QWidget)
 from PyQt5 import uic
-from PyQt5.QtGui import QPainter, QColor, QPixmap, QIcon
-from PyQt5.QtCore import QSize, QEvent
+from PyQt5.QtGui import QPainter, QPixmap, QIcon
+from PyQt5.QtCore import QSize
 from PIL import Image
 import time
 import os
 import random
-import math
 
 
 class Example(QMainWindow):
@@ -274,13 +273,14 @@ class StartSettings(QWidget):
 
     def get_image(self):
         self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'images/')[0]
-        self.im = Image.open(self.fname)
-        x, y = self.im.size
-        if x >= y:
-            pixmap = QPixmap(self.fname).scaledToWidth(100)
-        else:
-            pixmap = QPixmap(self.fname).scaledToHeight(100)
-        self.labelPreview.setPixmap(pixmap)
+        if self.fname:
+            self.im = Image.open(self.fname)
+            x, y = self.im.size
+            if x >= y:
+                pixmap = QPixmap(self.fname).scaledToWidth(100)
+            else:
+                pixmap = QPixmap(self.fname).scaledToHeight(100)
+            self.labelPreview.setPixmap(pixmap)
 
     def mouseMoveEvent(self, QMouseEvent):
         try:
