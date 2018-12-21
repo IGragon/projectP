@@ -11,39 +11,28 @@ import math
 
 
 class Example(QMainWindow):
-    def __init__(self):
+    def __init__(self, fname, parts_width, parts_hight, user_sett):
         super().__init__()
         uic.loadUi('puzzle.ui', self)
         self.setFixedSize(1080, 720)
         icon = QIcon("sys_im/icon.png")
         self.setWindowIcon(icon)
-        self.fname = ''
+        self.fname = fname
         self.image = ''
+        self.parts_w = int(parts_width) if user_sett else 6
+        self.parts_h = int(parts_hight) if user_sett else 6
+
         self.frame_to_hight = False
         self.frame_to_width = False
+        self.start_is_closed = False
         self.image_have_taken = False
         self.fixedPoints = dict()
 
         self.is_piece_following = False
         self.count_of_good_placed_Pieces = 0
         self.places_for_Pieces = dict()
-
-        self.get_image()
-        self.make_puzzle()
+        self.get_image(fname)
         self.t_start = time.time()
-
-    def clear_field(self):
-        warning = QMessageBox.question(self, 'Warning', 'Вы точно хотите выбрать новую картинку и начать игру заново?',
-                                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if warning == QMessageBox.Yes:
-            self.congrat = Congratulations(ex.t_start)
-            self.congrat.show()
-            '''for row in self.buttons:
-                for btn in row:
-                    self.centralwidget.removeWidget(btn)
-            self.get_image()
-            self.make_puzzle()
-            self.t_start = time.time()'''
 
     def paintEvent(self, event):
         if self.image_have_taken:
@@ -89,19 +78,19 @@ class Example(QMainWindow):
             self.labelForArt.setPixmap(pixmap)
             self.labelForArt.resize(self.labelForArt.sizeHint())
 
-    def get_image(self):
-        self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'images/')[0]
-        self.image = Image.open(self.fname)
+    def get_image(self, fname):
+        self.image = Image.open(fname)
         x, y = self.image.size
         if x >= y:
-            self.pixmap = QPixmap(self.fname).scaledToWidth(600)
+            self.pixmap = QPixmap(fname).scaledToWidth(600)
             self.frame_to_width = True
         else:
-            self.pixmap = QPixmap(self.fname).scaledToHeight(600)
+            self.pixmap = QPixmap(fname).scaledToHeight(600)
             self.frame_to_hight = True
         self.image_have_taken = True
         self.pixmap.save('data/main_pic.jpg')
         self.image = Image.open('data/main_pic.jpg')
+        self.make_puzzle()
 
     def make_puzzle(self):
         os.system('mkdir data')
@@ -224,7 +213,10 @@ class Congratulations(QWidget):
         self.setFixedSize(800, 560)
         self.setPicture()
         self.pushClose.clicked.connect(self.close)
-        self.labelTime.setText(self.labelTime.text() + str(round(time.time() - t, 2)) + ' секунд')
+        game_time = time.time() - t
+        min = game_time // 60
+        sec = game_time - min * 60
+        self.labelTime.setText(self.labelTime.text() + str(int(min)) + ':' + str(round(sec, 2)))
 
     def setPicture(self):
         pixmap = QPixmap('sys_im/congratulations.jpg')
@@ -232,8 +224,45 @@ class Congratulations(QWidget):
         self.labelCon.resize(self.labelCon.sizeHint())
 
 
+class StartSettings(QWidget):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('start.ui', self)
+        self.setFixedSize(400, 600)
+        self.im = ''
+        self.fname = ''
+        self.pushStart.clicked.connect(self.close_window)
+        self.pushSelect.clicked.connect(self.get_image)
+        self.labelHello.setPixmap(QPixmap("sys_im/pyzzle.jpg").scaledToWidth(370))
+        self.loaded = True
+
+    def close_window(self):
+        self.main_window = Example(self.fname, self.lineWidth.text(), self.lineHeight.text(),
+                                   self.checkSettings.isChecked())
+        self.main_window.show()
+        self.close()
+
+    def get_image(self):
+        self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'images/')[0]
+        self.im = Image.open(self.fname)
+        x, y = self.im.size
+        if x >= y:
+            pixmap = QPixmap(self.fname).scaledToWidth(100)
+        else:
+            pixmap = QPixmap(self.fname).scaledToHeight(100)
+        self.labelPreview.setPixmap(pixmap)
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if self.checkSettings.isChecked():
+            self.lineWidth.setEnabled(True)
+            self.lineHeight.setEnabled(True)
+        else:
+            self.lineWidth.setEnabled(False)
+            self.lineHeight.setEnabled(False)
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Example()
-    ex.show()
+    settings = StartSettings()
+    settings.show()
     sys.exit(app.exec())
