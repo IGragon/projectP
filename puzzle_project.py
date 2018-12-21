@@ -21,6 +21,7 @@ class Example(QMainWindow):
         self.image = ''
         self.x_pieces = int(parts_width)
         self.y_pieces = int(parts_hight)
+        self.already_won = False
         self.frame_to_hight = False
         self.frame_to_width = False
         self.image_have_taken = False
@@ -111,8 +112,8 @@ class Example(QMainWindow):
         for i in range(self.x_pieces):
             for j in range(self.y_pieces):
                 croped = self.image.crop([i * step_x, j * step_y, (i + 1) * step_x, (j + 1) * step_y])
-                self.fixedPoints[str(i) + str(j)] = (i * step_x + 390, j * step_y + 50)
-                name = 'image' + str(i + 1) + str(j + 1) + '.jpg'
+                self.fixedPoints[str(i) + ' ' + str(j)] = (i * step_x + 390, j * step_y + 50)
+                name = 'image ' + str(i + 1) + ' ' + str(j + 1) + '.jpg'
                 croped.save('data/' + name)
         self.createBtns(step_x, step_y)
 
@@ -130,18 +131,18 @@ class Example(QMainWindow):
                 btn = QPushButton('', self)
                 btn.resize(x, y)
                 btn.move(random.randint(0, 300 - x), random.randint(32, 720 - y))
-                icon = QIcon('data/image' + str(i + 1) + str(j + 1))
+                icon = QIcon('data/image ' + str(i + 1) + ' ' + str(j + 1))
                 btn.setIcon(icon)
                 btn.setIconSize(QSize(x, y))
                 btn.setMouseTracking(True)
-                btn.setObjectName(str(i + 1) + str(j + 1))
+                btn.setObjectName(str(i + 1) + ' ' + str(j + 1))
                 btn.clicked.connect(self.move_piece)
                 self.buttons.append(btn)
         self.height_of_piece = y
         self.width_of_piece = x
         for x_n in range(self.x_pieces):
             for y_n in range(self.y_pieces):
-                self.places_for_Pieces[str(x_n + 1) + str(y_n + 1)] = \
+                self.places_for_Pieces[str(x_n + 1) + ' ' + str(y_n + 1)] = \
                     [390 + x_n * self.width_of_piece, 50 + y_n * self.height_of_piece]
 
     def move_piece(self):
@@ -177,16 +178,15 @@ class Example(QMainWindow):
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
-                n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
-                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][
-                    -1] == self.moving_piece:
+                n_coord = str(coord_x_in_field + 1) + ' ' + str(coord_y_in_field + 1)
+                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
                     if self.moving_piece.objectName() == n_coord:
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
             self.is_piece_following = True
 
     def mouseMoveEvent(self, event):
-        if self.is_piece_following:
+        if self.is_piece_following and not self.already_won:
             new_x = event.x() - self.width_of_piece // 2
             if new_x < 0:
                 new_x = 0
@@ -200,8 +200,10 @@ class Example(QMainWindow):
             self.moving_piece.move(new_x, new_y)
 
     def win(self):
-        self.congrat = Congratulations(self.t_start)
-        self.congrat.show()
+        if not self.already_won:
+            self.congrat = Congratulations(self.t_start)
+            self.congrat.show()
+            self.already_won = True
 
     def closeEvent(self, event):
         buttonReply = QMessageBox.question(self, 'Quit?', "Хотите выйти?",
