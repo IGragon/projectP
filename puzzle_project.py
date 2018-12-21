@@ -124,7 +124,6 @@ class Example(QMainWindow):
                 btn.setIconSize(QSize(x, y))
                 btn.setMouseTracking(True)
                 btn.setObjectName(str(i + 1) + str(j + 1))
-                print(str(i + 1) + str(j + 1))
                 btn.clicked.connect(self.move_piece)
                 self.buttons.append(btn)
         self.height_of_piece = y
@@ -136,7 +135,6 @@ class Example(QMainWindow):
 
     def move_piece(self):
         if self.is_piece_following:
-            print('TAKE')
             self.is_piece_following = False
             mid_x = self.moving_piece.x() + self.width_of_piece // 2
             mid_y = self.moving_piece.y() + self.height_of_piece // 2
@@ -153,23 +151,18 @@ class Example(QMainWindow):
                          + (place[1][1] - self.moving_piece.y()) ** 2)
                         ** 0.5)[0]
                     self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
-                    print('fd')
                     self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
                                            self.places_for_Pieces[n_in_Places_for_Pieces][1])
                     if self.moving_piece.objectName() == n_in_Places_for_Pieces:
                         self.count_of_good_placed_Pieces += 1
-                print('good placed {}'.format(self.count_of_good_placed_Pieces))
-                print('TAKE END')
                 if self.count_of_good_placed_Pieces == self.x_pieces * self.y_pieces:
                     self.win()
 
 
         else:
-            print('PUT')
             self.moving_piece = self.sender()
             if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
-                print('IN!')
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
                 n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
@@ -178,8 +171,6 @@ class Example(QMainWindow):
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
             print('good placed {}'.format(self.count_of_good_placed_Pieces))
-            print(self.moving_piece.objectName())
-            print('END PUT')
             self.is_piece_following = True
 
     def mouseMoveEvent(self, event):
