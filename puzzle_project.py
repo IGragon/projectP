@@ -19,18 +19,16 @@ class Example(QMainWindow):
         self.setWindowIcon(icon)
         self.fname = fname
         self.image = ''
-        self.parts_w = int(parts_width) if user_sett else 6
-        self.parts_h = int(parts_hight) if user_sett else 6
+        self.x_pieces = int(parts_width) if user_sett else 6
+        self.y_pieces = int(parts_hight) if user_sett else 6
 
         self.frame_to_hight = False
         self.frame_to_width = False
-        self.start_is_closed = False
         self.image_have_taken = False
-        self.fixedPoints = dict()
-
         self.is_piece_following = False
         self.count_of_good_placed_Pieces = 0
         self.places_for_Pieces = dict()
+        self.fixedPoints = dict()
         self.get_image(fname)
         self.t_start = time.time()
 
@@ -95,30 +93,29 @@ class Example(QMainWindow):
     def make_puzzle(self):
         os.system('mkdir data')
         step_x, step_y = self.image.size
-        step_x = step_x // 6
-        step_y = step_y // 6
+        step_x = step_x // self.x_pieces
+        step_y = step_y // self.y_pieces
         self.btn_size_x = step_x
         self.btn_size_y = step_y
-        for i in range(6):
-            for j in range(6):
-                croped = self.image.crop([j * step_x, i * step_y, (j + 1) * step_x, (i + 1) * step_y])
-                self.fixedPoints[str(i) + str(j)] = (j * step_x + 390, i * step_y + 50)
+        for i in range(self.x_pieces):
+            for j in range(self.y_pieces):
+                croped = self.image.crop([i * step_x, j * step_y, (i + 1) * step_x, (j + 1) * step_y])
+                self.fixedPoints[str(i) + str(j)] = (i * step_x + 390, j * step_y + 50)
                 name = 'image' + str(i + 1) + str(j + 1) + '.jpg'
                 croped.save('data/' + name)
         self.createBtns(step_x, step_y)
 
     def createBtns(self, x, y):
         x_im, y_im = self.image.size
-        if x >= y:
-            y = ((600 * y_im) // x_im) // 6
-            x = 100
-        if y > x:
-            x = ((600 * x_im) // y_im) // 6
-            y = 100
+        if x > y:
+            y = ((600 * y_im) // x_im) // self.y_pieces
+            x = 600 // self.x_pieces
+        if y >= x:
+            x = ((600 * x_im) // y_im) // self.x_pieces
+            y = 600 // self.y_pieces
         self.buttons = []
-        for i in range(6):
-            part = []
-            for j in range(6):
+        for i in range(self.x_pieces):
+            for j in range(self.y_pieces):
                 btn = QPushButton('', self)
                 btn.resize(x, y)
                 btn.move(random.randint(0, 280 - x), random.randint(32, 720 - y))
@@ -126,17 +123,14 @@ class Example(QMainWindow):
                 btn.setIcon(icon)
                 btn.setIconSize(QSize(x, y))
                 btn.setMouseTracking(True)
-                btn.setObjectName(str(j + 1) + str(i + 1))
-                part.append(btn)
-                print(btn.objectName())
-            self.buttons.append(part)
-        for l in self.buttons:
-            for btn in l:
+                btn.setObjectName(str(i + 1) + str(j + 1))
+                print(str(i + 1) + str(j + 1))
                 btn.clicked.connect(self.move_piece)
+                self.buttons.append(btn)
         self.height_of_piece = y
         self.width_of_piece = x
-        for x_n in range(6):
-            for y_n in range(6):
+        for x_n in range(self.x_pieces):
+            for y_n in range(self.y_pieces):
                 self.places_for_Pieces[str(x_n + 1) + str(y_n + 1)] = \
                     [390 + x_n * self.width_of_piece, 50 + y_n * self.height_of_piece]
 
@@ -146,27 +140,27 @@ class Example(QMainWindow):
             self.is_piece_following = False
             mid_x = self.moving_piece.x() + self.width_of_piece // 2
             mid_y = self.moving_piece.y() + self.height_of_piece // 2
-            if 390 < mid_x < (390 + self.width_of_piece * 6) and \
-                    50 < mid_y < (50 + self.height_of_piece * 6):
+            if 390 < mid_x < (390 + self.width_of_piece * self.x_pieces) and \
+                    50 < mid_y < (50 + self.height_of_piece * self.y_pieces):
                 open_places = list(filter(lambda place: len(place[1]) < 3 and
-                                                        abs(place[1][
-                                                                0] - self.moving_piece.x()) < self.width_of_piece and
-                                                        abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
-                                          self.places_for_Pieces.items()))
+                                                   abs(place[1][0] - self.moving_piece.x()) < self.width_of_piece and
+                                                   abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
+                                     self.places_for_Pieces.items()))
                 if len(open_places):
                     n_in_Places_for_Pieces = min(open_places,
-                                                 key=lambda place:
-                                                 ((place[1][0] - self.moving_piece.x()) ** 2
-                                                  + (place[1][1] - self.moving_piece.y()) ** 2)
-                                                 ** 0.5)[0]
+                        key = lambda place:
+                        ((place[1][0] - self.moving_piece.x()) ** 2
+                         + (place[1][1] - self.moving_piece.y()) ** 2)
+                        ** 0.5)[0]
                     self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
+                    print('fd')
                     self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
                                            self.places_for_Pieces[n_in_Places_for_Pieces][1])
                     if self.moving_piece.objectName() == n_in_Places_for_Pieces:
                         self.count_of_good_placed_Pieces += 1
                 print('good placed {}'.format(self.count_of_good_placed_Pieces))
                 print('TAKE END')
-                if self.count_of_good_placed_Pieces == 36:
+                if self.count_of_good_placed_Pieces == self.x_pieces * self.y_pieces:
                     self.win()
 
 
@@ -175,15 +169,16 @@ class Example(QMainWindow):
             self.moving_piece = self.sender()
             if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
+                print('IN!')
                 coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
                 coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
                 n_coord = str(coord_x_in_field + 1) + str(coord_y_in_field + 1)
-                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][
-                    -1] == self.moving_piece:
+                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][-1] == self.moving_piece:
                     if self.moving_piece.objectName() == n_coord:
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
             print('good placed {}'.format(self.count_of_good_placed_Pieces))
+            print(self.moving_piece.objectName())
             print('END PUT')
             self.is_piece_following = True
 
