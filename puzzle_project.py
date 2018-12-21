@@ -258,7 +258,7 @@ class StartSettings(QWidget):
                                        and 12 > int(self.lineWidth.text()) > 1 and 12 > int(
                         self.lineHeight.text()) > 1):
                 text = 'Неверное количество элементов и невыбрана картинка'
-            elif not (12 > int(self.lineWidth.text()) > 1 and 12 > int(self.lineHeight.text()) > 1):
+            elif not (13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1):
                 text = 'Неверное количество элементов'
             else:
                 text = 'Невыбрана картинка'
@@ -285,7 +285,7 @@ class StartSettings(QWidget):
                 self.lineWidth.setEnabled(True)
                 self.lineHeight.setEnabled(True)
                 if not (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-                        and 12 > int(self.lineWidth.text()) > 1 and 12 > int(self.lineHeight.text()) > 1):
+                        and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1):
                     self.labelWarning.setStyleSheet("color: red;")
                 else:
                     self.labelWarning.setStyleSheet("color: black;")
