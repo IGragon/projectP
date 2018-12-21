@@ -163,6 +163,19 @@
     <string> Х</string>
    </property>
   </widget>
+  <widget class="QLabel" name="labelWarning">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>480</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&gt;1           &gt;1</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
