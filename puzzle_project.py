@@ -183,7 +183,6 @@ class Example(QMainWindow):
                     if self.moving_piece.objectName() == n_coord:
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
-            print('good placed {}'.format(self.count_of_good_placed_Pieces))
             self.is_piece_following = True
 
     def mouseMoveEvent(self, event):
@@ -247,13 +246,26 @@ class StartSettings(QWidget):
 
     def closeEvent(self, event):
         if (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-           and int(self.lineWidth.text()) > 1 and int(self.lineHeight.text()) > 1):
-            self.main_window = Example(self.fname, self.lineWidth.text(), self.lineHeight.text())
-            self.main_window.show()
-            self.close()
+            and int(self.lineWidth.text()) > 1 and int(self.lineHeight.text()) > 1) and self.fname:
+            if self.fname:
+                self.main_window = Example(self.fname, self.lineWidth.text(), self.lineHeight.text())
+                self.main_window.show()
+                self.close()
         else:
-            self.labelWarning.setStyleSheet("color: red;")
-            event.ignore()
+            if not self.fname and not (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
+                                       and 12 > int(self.lineWidth.text()) > 1 and 12 > int(
+                        self.lineHeight.text()) > 1):
+                text = 'Неверное количество элементов и невыбрана картинка'
+            elif not (12 > int(self.lineWidth.text()) > 1 and 12 > int(self.lineHeight.text()) > 1):
+                text = 'Неверное количество элементов'
+            else:
+                text = 'Невыбрана картинка'
+            dialog = QMessageBox.question(self, 'Что-то не так', text + '\nА может Вы хотите выйти?',
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if dialog == QMessageBox.Yes:
+                self.close()
+            else:
+                event.ignore()
 
     def get_image(self):
         self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'images/')[0]
@@ -271,7 +283,7 @@ class StartSettings(QWidget):
                 self.lineWidth.setEnabled(True)
                 self.lineHeight.setEnabled(True)
                 if not (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-                    and int(self.lineWidth.text()) > 1 and int(self.lineHeight.text()) > 1):
+                        and 12 > int(self.lineWidth.text()) > 1 and 12 > int(self.lineHeight.text()) > 1):
                     self.labelWarning.setStyleSheet("color: red;")
                 else:
                     self.labelWarning.setStyleSheet("color: black;")
