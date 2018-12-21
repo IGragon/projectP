@@ -250,7 +250,7 @@ class StartSettings(QWidget):
 
     def closeEvent(self, event):
         if (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-                and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1) and self.fname:
+            and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1) and self.fname:
             if self.fname:
                 self.main_window = Example(self.fname, self.lineWidth.text(), self.lineHeight.text())
                 self.main_window.show()
