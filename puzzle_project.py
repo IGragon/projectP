@@ -9,7 +9,7 @@ import os
 import random
 
 
-class Example(QMainWindow):
+class SolveWindow(QMainWindow):
     def __init__(self, fname, parts_width, parts_hight):
         super().__init__()
         uic.loadUi('puzzle.ui', self)
@@ -253,7 +253,7 @@ class StartSettings(QWidget):
         if (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
             and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1) and self.fname:
             if self.fname:
-                self.main_window = Example(self.fname, self.lineWidth.text(), self.lineHeight.text())
+                self.main_window = SolveWindow(self.fname, self.lineWidth.text(), self.lineHeight.text())
                 self.main_window.show()
                 self.close()
         else:
