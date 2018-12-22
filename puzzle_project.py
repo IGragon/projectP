@@ -87,6 +87,7 @@ class Example(QMainWindow):
         self.image_have_taken = True
         self.pixmap.save('data/main_pic.jpg')
         self.cut_useless_pixels(Image.open('data/main_pic.jpg'))
+        self.pixmap = QPixmap('data/main_pic.jpg')
         self.image = Image.open('data/main_pic.jpg')
         self.make_puzzle()
 
