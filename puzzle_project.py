@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QPushButton, QMessageBox, QWidget)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog,
+                             QPushButton, QMessageBox, QWidget)
 from PyQt5 import uic
 from PyQt5.QtGui import QPainter, QPixmap, QIcon
 from PyQt5.QtCore import QSize
@@ -158,11 +159,12 @@ class SolveWindow(QMainWindow):
             if 390 < mid_x < (390 + self.width_of_piece * self.x_pieces) and \
                     50 < mid_y < (50 + self.height_of_piece * self.y_pieces):
                 open_places = list(filter(lambda place: len(place[1]) < 3 and
-                                                        abs(place[1][0] - self.moving_piece.x()) <
-                                                        self.width_of_piece and
-                                                        abs(place[1][1] - self.moving_piece.y()) <
-                                                        self.height_of_piece,
-                                          self.places_for_Pieces.items()))
+                                   abs(place[1][0] -
+                                   self.moving_piece.x()) <
+                                   self.width_of_piece and
+                                   abs(place[1][1] - self.moving_piece.y()) <
+                                   self.height_of_piece,
+                                   self.places_for_Pieces.items()))
                 if len(open_places):
                     n_in_Places_for_Pieces = min(open_places,
                                                  key=lambda place:
@@ -198,7 +200,8 @@ class SolveWindow(QMainWindow):
                 n_coord = (str(coord_x_in_field + 1) + ' ' +
                            str(coord_y_in_field + 1))
                 if len(self.places_for_Pieces[n_coord]) > 2 and \
-                        self.places_for_Pieces[n_coord][-1] == self.moving_piece:
+                        self.places_for_Pieces[n_coord][-1] == \
+                        self.moving_piece:
                     if self.moving_piece.objectName() == n_coord:
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
@@ -275,7 +278,7 @@ class StartSettings(QWidget):
         if (self.lineWidth.text().isdigit() and
             self.lineHeight.text().isdigit() and
             13 > int(self.lineWidth.text()) > 1 and
-            13 > int(self.lineHeight.text()) > 1) and self.fname:
+                13 > int(self.lineHeight.text()) > 1) and self.fname:
             if self.fname:
                 self.main_window = SolveWindow(self.fname,
                                                self.lineWidth.text(),
