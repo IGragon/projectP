@@ -94,7 +94,8 @@ class SolveWindow(QMainWindow):
     def cut_useless_pixels(self, image):
         pixels = image.load()
         x, y = image.size
-        cut_image = Image.new('RGB', (x - (x % self.x_pieces), y - (y % self.y_pieces)), (0, 0, 0))
+        cut_image = Image.new('RGB', (x - (x % self.x_pieces),
+                                      y - (y % self.y_pieces)), (0, 0, 0))
         new_pixels = cut_image.load()
         x_new, y_new = cut_image.size
         for i in range(x_new):
@@ -103,7 +104,6 @@ class SolveWindow(QMainWindow):
         cut_image.save('data/main_pic.jpg')
 
     def make_puzzle(self):
-        os.system('mkdir data')
         step_x, step_y = self.image.size
         step_x = step_x // self.x_pieces
         step_y = step_y // self.y_pieces
@@ -111,8 +111,11 @@ class SolveWindow(QMainWindow):
         self.btn_size_y = step_y
         for i in range(self.x_pieces):
             for j in range(self.y_pieces):
-                croped = self.image.crop([i * step_x, j * step_y, (i + 1) * step_x, (j + 1) * step_y])
-                self.fixedPoints[str(i) + ' ' + str(j)] = (i * step_x + 390, j * step_y + 50)
+                croped = self.image.crop([i * step_x, j *
+                                          step_y, (i + 1) * step_x,
+                                          (j + 1) * step_y])
+                self.fixedPoints[str(i) + ' ' + str(j)] = \
+                    (i * step_x + 390, j * step_y + 50)
                 name = 'image ' + str(i + 1) + ' ' + str(j + 1) + '.jpg'
                 croped.save('data/' + name)
         self.createBtns(step_x, step_y)
@@ -130,7 +133,8 @@ class SolveWindow(QMainWindow):
             for j in range(self.y_pieces):
                 btn = QPushButton('', self)
                 btn.resize(x, y)
-                btn.move(random.randint(0, 300 - x), random.randint(32, 720 - y))
+                btn.move(random.randint(0, 300 - x),
+                         random.randint(32, 720 - y))
                 icon = QIcon('data/image ' + str(i + 1) + ' ' + str(j + 1))
                 btn.setIcon(icon)
                 btn.setIconSize(QSize(x, y))
@@ -143,7 +147,8 @@ class SolveWindow(QMainWindow):
         for x_n in range(self.x_pieces):
             for y_n in range(self.y_pieces):
                 self.places_for_Pieces[str(x_n + 1) + ' ' + str(y_n + 1)] = \
-                    [390 + x_n * self.width_of_piece, 50 + y_n * self.height_of_piece]
+                    [390 + x_n * self.width_of_piece,
+                     50 + y_n * self.height_of_piece]
 
     def move_piece(self):
         if self.is_piece_following:
@@ -153,34 +158,47 @@ class SolveWindow(QMainWindow):
             if 390 < mid_x < (390 + self.width_of_piece * self.x_pieces) and \
                     50 < mid_y < (50 + self.height_of_piece * self.y_pieces):
                 open_places = list(filter(lambda place: len(place[1]) < 3 and
-                                                        abs(place[1][
-                                                                0] - self.moving_piece.x()) < self.width_of_piece and
-                                                        abs(place[1][1] - self.moving_piece.y()) < self.height_of_piece,
+                                                        abs(place[1][0] - self.moving_piece.x()) <
+                                                        self.width_of_piece and
+                                                        abs(place[1][1] - self.moving_piece.y()) <
+                                                        self.height_of_piece,
                                           self.places_for_Pieces.items()))
                 if len(open_places):
                     n_in_Places_for_Pieces = min(open_places,
                                                  key=lambda place:
-                                                 ((place[1][0] - self.moving_piece.x()) ** 2
-                                                  + (place[1][1] - self.moving_piece.y()) ** 2)
-                                                 ** 0.5)[0]
-                    self.places_for_Pieces[n_in_Places_for_Pieces] += [self.moving_piece]
-                    self.moving_piece.move(self.places_for_Pieces[n_in_Places_for_Pieces][0],
-                                           self.places_for_Pieces[n_in_Places_for_Pieces][1])
-                    if self.moving_piece.objectName() == n_in_Places_for_Pieces:
+                                                 ((place[1][0] -
+                                                   self.
+                                                   moving_piece.
+                                                   x()) **
+                                                  2 + (place[1][1] -
+                                                       self.
+                                                       moving_piece.
+                                                       y()) **
+                                                  2) ** 0.5)[0]
+                    self.places_for_Pieces[n_in_Places_for_Pieces] += \
+                        [self.moving_piece]
+                    self.moving_piece.move(self.places_for_Pieces
+                                           [n_in_Places_for_Pieces][0],
+                                           self.places_for_Pieces
+                                           [n_in_Places_for_Pieces][1])
+                    if self.moving_piece.objectName() == \
+                            n_in_Places_for_Pieces:
                         self.count_of_good_placed_Pieces += 1
-                if self.count_of_good_placed_Pieces == self.x_pieces * self.y_pieces:
+                if self.count_of_good_placed_Pieces == \
+                        self.x_pieces * self.y_pieces:
                     self.win()
-
-
         else:
             self.moving_piece = self.sender()
             if not ((self.moving_piece.x() - 390) % self.width_of_piece) and \
                     not ((self.moving_piece.y() - 50) % self.height_of_piece):
-                coord_x_in_field = (self.moving_piece.x() - 390) // self.width_of_piece
-                coord_y_in_field = (self.moving_piece.y() - 50) // self.height_of_piece
-                n_coord = str(coord_x_in_field + 1) + ' ' + str(coord_y_in_field + 1)
-                if len(self.places_for_Pieces[n_coord]) > 2 and self.places_for_Pieces[n_coord][
-                    -1] == self.moving_piece:
+                coord_x_in_field = ((self.moving_piece.x() - 390) //
+                                    self.width_of_piece)
+                coord_y_in_field = ((self.moving_piece.y() - 50) //
+                                    self.height_of_piece)
+                n_coord = (str(coord_x_in_field + 1) + ' ' +
+                           str(coord_y_in_field + 1))
+                if len(self.places_for_Pieces[n_coord]) > 2 and \
+                        self.places_for_Pieces[n_coord][-1] == self.moving_piece:
                     if self.moving_piece.objectName() == n_coord:
                         self.count_of_good_placed_Pieces -= 1
                     del self.places_for_Pieces[n_coord][-1]
@@ -208,7 +226,8 @@ class SolveWindow(QMainWindow):
 
     def closeEvent(self, event):
         buttonReply = QMessageBox.question(self, 'Quit?', "Хотите выйти?",
-                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                                           QMessageBox.Yes | QMessageBox.No,
+                                           QMessageBox.No)
         if buttonReply == QMessageBox.Yes:
             os.system('del data /Q')
             self.close()
@@ -228,7 +247,8 @@ class Congratulations(QWidget):
         game_time = time.time() - t
         min = game_time // 60
         sec = game_time - min * 60
-        self.labelTime.setText(self.labelTime.text() + str(int(min)) + ':' + str(round(sec, 2)))
+        self.labelTime.setText(self.labelTime.text() + str(int(min)) +
+                               ':' + str(round(sec, 2)))
 
     def setPicture(self):
         pixmap = QPixmap('sys_im/congratulations.jpg')
@@ -238,6 +258,7 @@ class Congratulations(QWidget):
 
 class StartSettings(QWidget):
     def __init__(self):
+        os.system('mkdir data')
         super().__init__()
         uic.loadUi('start.ui', self)
         self.setFixedSize(400, 600)
@@ -247,33 +268,43 @@ class StartSettings(QWidget):
         self.fname = ''
         self.pushStart.clicked.connect(self.close)
         self.pushSelect.clicked.connect(self.get_image)
-        self.labelHello.setPixmap(QPixmap("sys_im/pyzzle.jpg").scaledToWidth(370))
+        self.labelHello.setPixmap(QPixmap("sys_im/pyzzle.jpg").
+                                  scaledToWidth(370))
 
     def closeEvent(self, event):
-        if (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-            and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1) and self.fname:
+        if (self.lineWidth.text().isdigit() and
+            self.lineHeight.text().isdigit() and
+            13 > int(self.lineWidth.text()) > 1 and
+            13 > int(self.lineHeight.text()) > 1) and self.fname:
             if self.fname:
-                self.main_window = SolveWindow(self.fname, self.lineWidth.text(), self.lineHeight.text())
+                self.main_window = SolveWindow(self.fname,
+                                               self.lineWidth.text(),
+                                               self.lineHeight.text())
                 self.main_window.show()
                 self.close()
         else:
-            if not self.fname and not (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-                                       and 13 > int(self.lineWidth.text()) > 1 and 13 > int(
-                        self.lineHeight.text()) > 1):
+            if not self.fname and not (self.lineWidth.text().isdigit() and
+                                       self.lineHeight.text().isdigit() and
+                                       13 > int(self.lineWidth.text()) > 1 and
+                                       13 > int(self.lineHeight.text()) > 1):
                 text = 'Неверное количество элементов и невыбрана картинка'
-            elif not (13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1):
+            elif not (13 > int(self.lineWidth.text()) > 1 and
+                      13 > int(self.lineHeight.text()) > 1):
                 text = 'Неверное количество элементов'
             else:
                 text = 'Невыбрана картинка'
-            dialog = QMessageBox.question(self, 'Что-то не так', text + '\nА может Вы хотите выйти?',
-                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            dialog = QMessageBox.question(self, 'Что-то не так',
+                                          text + '\nА может Вы хотите выйти?',
+                                          QMessageBox.Yes | QMessageBox.No,
+                                          QMessageBox.No)
             if dialog == QMessageBox.Yes:
                 self.close()
             else:
                 event.ignore()
 
     def get_image(self):
-        self.fname = QFileDialog.getOpenFileName(self, 'Open file', 'images/')[0]
+        self.fname = QFileDialog.getOpenFileName(self,
+                                                 'Open file', 'images/')[0]
         if self.fname:
             self.im = Image.open(self.fname)
             x, y = self.im.size
@@ -284,23 +315,22 @@ class StartSettings(QWidget):
             self.labelPreview.setPixmap(pixmap)
 
     def mouseMoveEvent(self, QMouseEvent):
-        try:
-            if self.checkSettings.isChecked():
-                self.lineWidth.setEnabled(True)
-                self.lineHeight.setEnabled(True)
-                if not (self.lineWidth.text().isdigit() and self.lineHeight.text().isdigit()
-                        and 13 > int(self.lineWidth.text()) > 1 and 13 > int(self.lineHeight.text()) > 1):
-                    self.labelWarning.setStyleSheet("color: red;")
-                else:
-                    self.labelWarning.setStyleSheet("color: black;")
+        if self.checkSettings.isChecked():
+            self.lineWidth.setEnabled(True)
+            self.lineHeight.setEnabled(True)
+            if not (self.lineWidth.text().isdigit() and
+                    self.lineHeight.text().isdigit() and
+                    13 > int(self.lineWidth.text()) > 1 and
+                    13 > int(self.lineHeight.text()) > 1):
+                self.labelWarning.setStyleSheet("color: red;")
             else:
-                self.lineWidth.setEnabled(False)
-                self.lineHeight.setEnabled(False)
-                self.lineWidth.setText('6')
-                self.lineHeight.setText('6')
                 self.labelWarning.setStyleSheet("color: black;")
-        except Exception as e:
-            print(e)
+        else:
+            self.lineWidth.setEnabled(False)
+            self.lineHeight.setEnabled(False)
+            self.lineWidth.setText('6')
+            self.lineHeight.setText('6')
+            self.labelWarning.setStyleSheet("color: black;")
 
 
 if __name__ == '__main__':
