@@ -14,8 +14,12 @@
           <option name="url" value="https://github.com/IGragon/Web.git" />
           <option name="userName" value="" />
         </UrlAndUserName>
+        <UrlAndUserName>
+          <option name="url" value="https://github.com/IGragon/Alice.git" />
+          <option name="userName" value="" />
+        </UrlAndUserName>
       </list>
     </option>
-    <option name="cloneParentDir" value="C:\Users\IGragon\PycharmProjects\2year\web" />
+    <option name="cloneParentDir" value="C:\Users\IGragon\PycharmProjects\2year\web\Alicization" />
   </component>
 </application>
